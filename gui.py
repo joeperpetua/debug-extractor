@@ -30,6 +30,11 @@ app.setPadding([0,0])
 app.stopFrame()
 
 
+
+
+
+print("test")
+
 app.startFrame("footer", row=3, column=0)
 app.addButtons(["Open with Visual Studio", "Open with Sublime Text"], btnPress,row=0, column=0,)
 app.stopFrame()

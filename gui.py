@@ -15,6 +15,8 @@ sublimeExecutable = ""
 destination = "C:" + bar + "tickets" + bar
 name = ''
 path = ''
+supportedFiles = ['dat', 'zip', 'rar', 'tar', '7z', 'gzip']
+supported = False
 
 # create a GUI variable called app
 app = gui("Debug Analyzer", "600x600")
@@ -24,6 +26,9 @@ app.setFg('white', override=False)
 app.setBg('#263238', override=False, tint=False)
 app.setFont(size=12, family="Verdana", underline=False, slant="roman")
 
+
+def launchSubWindow(win):
+    app.showSubWindow(win)
 
 
 def isx64():
@@ -41,60 +46,80 @@ def clearFileInput():
 def openWithVS(path, name):
     print('vs :' + path + " with name : " + name)   
     cmdVScode = "code " + destination + name
-    try:
-        os.system(cmdVScode)
-    except Exception as err:
-        print(str(datetime.now()) + " debug analizer: Error occurred while launching VScode! \n")
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print("Type error: " + str(err))
-        print('File Name:', fname, 'Line Numer:', exc_tb.tb_lineno, end = '\n\n')   
+
+    result = subprocess.run(cmdVScode, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    if result.stderr:
+        print(cmdVScode, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
+        app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode \n" + result.stderr.decode('utf-8'))
+        # if os.path.exists("C:" + bar + "tickets" + bar + name):
+        #     os.system("C:" + bar + "tickets" + bar + name)
+    # try:
+    #     os.system(cmdVScode)
+    # except Exception as err:
+    #     print(str(datetime.now()) + " debug analizer: Error occurred while launching VScode! \n")
+    #     exc_type, exc_obj, exc_tb = sys.exc_info()
+    #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    #     print("Type error: " + str(err))
+    #     print('File Name:', fname, 'Line Numer:', exc_tb.tb_lineno, end = '\n\n')   
+    #     app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode! \nType error: " + str(err) + '\nFile Name:' + fname + 'Line Numer:' + exc_tb.tb_lineno)
 
 
 def openWithSub(path, name):
     print('sub :' + path + " with name : " + name)
 
+    # Did this because env PATH is not created for sublime by default on installation,
+    # plus didn't know how to use global vars in py so I made the local one here,
+    # should change later to directly overwrite in original if
     if isx64():
         sublimeExecutable = '"C:' + bar + 'Program Files' + bar + 'Sublime Text 3' + bar + 'subl.exe"'
     else:
         sublimeExecutable = '"C:' + bar + 'Program Files (x86)' + bar + 'Sublime Text 3' + bar + 'subl.exe"'
     
     cmdSubl = sublimeExecutable + ' -a ' + destination + name
-    try:
-        os.system(cmdSubl)
-    except Exception as err:
-        print(str(datetime.now()) + " debug analizer: Error occurred while launching VScode! \n")
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print("Type error: " + str(err))
-        print('File Name:', fname, 'Line Numer:', exc_tb.tb_lineno, end = '\n\n')    
-
-
-    # cmdSubl = sublimeExecutable + ' -a ' + destination + name
+    result = subprocess.run(cmdSubl, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    if result.stderr:
+        print(cmdSubl, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
+        app.errorBox("Cannot run Sublime Text", str(datetime.now()) + " debug analizer: Error occurred while launching Sublime Text 3! \n" + result.stderr.decode('utf-8'))
     # try:
-    #     os.system(cmdSubl)
+    #     result = subprocess.run(cmdSubl, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #     print(cmdSubl, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
     # except Exception as err:
-    #     print(str(datetime.now()) + " debug analizer: Error occurred while launching VScode! \n")
+    #     print(str(datetime.now()) + " debug analizer: Error occurred while launching Sublime Text 3! \n")
     #     exc_type, exc_obj, exc_tb = sys.exc_info()
     #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     #     print("Type error: " + str(err))
-    #     print('File Name:', fname, 'Line Numer:', exc_tb.tb_lineno, end = '\n\n')     
+    #     print('File Name:', fname, 'Line Numer:', exc_tb.tb_lineno, end = '\n\n')    
+    #     app.errorBox("Cannot run Sublime Text", str(datetime.now()) + " debug analizer: Error occurred while launching Sublime Text 3! \nType error: " + str(err) + "\nFile Name:" + str(fname) + "\nLine Numer:" + str(exc_tb.tb_lineno))
 
 
 def unZip(path, name):
     print('unzip :' + path + "\nwith name : " + name)
     cmd7z = "7z" + ' x ' + path + ' -bsp1 -o' + destination + name
-    try:
-        for x in range(0, 11):
-            app.setMeter("progress", x*random.randint(1, 10))
-        os.system(cmd7z)
-        app.setMeter("progress", 100)
-    except Exception as err:
-        print(str(datetime.now()) + " debug analizer: Error occurred while extracting file! \n")
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print("Type error: " + str(err))
-        print('File Name:', fname, 'Line Numer:', exc_tb.tb_lineno, end = '\n\n')
+
+    for x in range(0, 11):
+        app.setMeter("progress", x*random.randint(1, 10))
+
+    result = subprocess.run(cmd7z, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    if result.stderr:
+        print(cmd7z, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
+        app.errorBox("Cannot extract file", str(datetime.now()) + " debug analizer: Error occurred while extracting file \n" + result.stderr.decode('utf-8'))
+        app.setMeter("progress", 0)
+        return 0
+    app.setMeter("progress", 100)
+
+    # try:
+    #     for x in range(0, 11):
+    #         app.setMeter("progress", x*random.randint(1, 10))
+    #     os.system(cmd7z)
+    #     app.setMeter("progress", 100)
+
+    # except Exception as err:
+    #     print(str(datetime.now()) + " debug analizer: Error occurred while extracting file! \n")
+    #     exc_type, exc_obj, exc_tb = sys.exc_info()
+    #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    #     print("Type error: " + str(err))
+    #     print('File Name:', fname, 'Line Numer:', exc_tb.tb_lineno, end = '\n\n')
+    #     app.errorBox("Cannot extract", str(datetime.now()) + " debug analizer: Error occurred while extracting file! \nType error: " + str(err) + '\nFile Name:' + fname + 'Line Numer:' + exc_tb.tb_lineno)
 
 
 # Events
@@ -107,11 +132,27 @@ def btnPress(btn):
 
     if btn == 'vscode':
         check(path, name, btn)
-        #openWithVS(path, name)
 
     if btn == 'sublime':
         check(path, name, btn)
-        #openWithSub(path, name)  
+    
+    if btn == 'Help':
+        os.system('START "" https://github.com/joeperpetua/debug-analyzer#debug-analyzer')
+
+    if btn == 'Report Bug':
+        os.system('START "" https://github.com/joeperpetua/debug-analyzer#report-bug')
+    
+    if btn == 'Close' or btn == ' Close ':
+        app.hideAllSubWindows()
+    
+    if btn == 'Download Visual Studio Code':
+        os.system('START "" https://code.visualstudio.com/download')
+
+    if btn == 'Download Sublime Text 3':
+        os.system('START "" https://www.sublimetext.com/3')
+
+    if btn == 'Download 7zip':
+        os.system('START "" https://www.7-zip.org/download.html')
 
 
 def check(path, name, btn):
@@ -121,7 +162,17 @@ def check(path, name, btn):
         app.warningBox("No file selected", "Please select a file to analyze", parent=None)
         return 0
     elif os.path.exists(path):
-        print('path is valid')
+        print('path exists')
+        for element in supportedFiles:
+            if path.endswith(element):
+                global supported
+                supported = True
+                print('file type supported: ' + element)
+        
+        if not supported:
+            app.errorBox("File not supported", "The tool supports only 'dat', 'zip', 'rar', 'tar', '7z', 'gzip' file extensions...\nCheck it")
+            return 0
+
     
     # Check directory name possible scenarios
     if name == '':
@@ -134,60 +185,72 @@ def check(path, name, btn):
 
     # Check if programs are installed
     
+    canRun = 0
     #x64
     if isx64():
 
         #7z64 \\ C:\Program Files\7-Zip\7z.exe
         if os.path.exists('C:' + bar + 'Program Files' + bar + '7-Zip' + bar + '7z.exe'):
             print('7z found')
+            canRun += 1
             pass
         else:
             print('7z64 not found')
+            launchSubWindow('7zip not found')
             return 0
 
         #VScode64 \\ C:Users\USER\AppData\Local\Programs\Microsoft VS Code\code.exe
         if os.path.exists('C:' + bar + 'Users' + bar + os.getlogin() + bar + 'AppData' + bar + 'Local' + bar + 'Programs' + bar + 'Microsoft VS Code' + bar + 'code.exe'):
             print('VScode found')
+            canRun += 1
             pass
         else:
             print('VScode64 not found')
-            return 0
 
         #Sublime64 \\ C:\Program Files\Sublime Text 3\subl.exe
         if os.path.exists('C:' + bar + 'Program Files' + bar + 'Sublime Text 3' + bar + 'subl.exe'):
             print('Sublime Text 3 found')
+            canRun += 1
             pass
         else:
             print('Sublime Text 3 64 not found')
-            return 0
+            if canRun <= 1:
+                launchSubWindow('Text editor not found')
+                return 0
     #x86
     else:
         
-        #7z64 \\ C:\Program Files (x86)\7-Zip\7z.exe 
+        #7z86 \\ C:\Program Files (x86)\7-Zip\7z.exe 
         if os.path.exists('C:' + bar + 'Program Files (x86)' + bar + '7-Zip' + bar + '7z.exe'):
             print('7z found')
+            canRun += 1
             pass
         else:
             print('7z not found')
+            launchSubWindow('7zip not found')
             return 0
 
-        #VScode64
+        #VScode
         if os.path.exists('C:' + bar + 'Users' + bar + os.getlogin() + bar + 'AppData' + bar + 'Local' + bar + 'Programs' + bar + 'Microsoft VS Code' + bar + 'code.exe'):
             print('VScode found')
+            canRun += 1
             pass
         else:
             print('VScode not found')
-            return 0
 
-        #Sublime64  \\ C:\Program Files (x86)\Sublime Text 3\subl.exe 
+        #Sublime86  \\ C:\Program Files (x86)\Sublime Text 3\subl.exe 
         if os.path.exists('C:' + bar + 'Program Files (x86)' + bar + 'Sublime Text 3' + bar + 'subl.exe'):
             print('Sublime Text 3 found')
+            canRun += 1
             pass
         else:
             print('Sublime Text 3 not found')
-            return 0
+            if canRun <= 1:
+                launchSubWindow('Text Editor not found')
+                return 0
         
-    unZip(path, name)
+    if unZip(path, name) == 0:
+        return 0
 
     if btn == 'vscode':
         openWithVS(path, name)
@@ -262,6 +325,39 @@ if app:
     app.setButtonRelief("Report Bug", "flat")
     app.stopFrame()
 
+
+    app.startSubWindow('7zip not found', modal=True)
+    app.setBg('#263238', override=False, tint=False)
+    app.setPadding([60,60])
+
+    app.startFrame('modal 7z', row=0, column=0)
+    app.addLabel("7zip not found message", "The program 7zip was not found in your system, this is a required\nprogram to run the tool, please install it and try launching the tool again.", row=0, column=0)
+    app.stopFrame()
+
+    app.startFrame('modal 7z2', row=1, column=0)
+    app.setPadding([60,10])
+    app.addButton('Download 7zip', btnPress, row=0, column=0)
+    app.addButton('Close', btnPress, row=0, column=1)
+    app.stopFrame()
+
+    app.stopSubWindow()
+
+    app.startSubWindow('Text editor not found', modal=True)
+    app.setBg('#263238', override=False, tint=False)
+    app.setPadding([60,60])
+
+    app.startFrame('modal te', row=0, column=0)
+    app.addLabel("Lb not found message", "The tool could not find nor Visual Studio Code nor Sublime Text 3,\nat least one of them is required to run the tool,\nplease install either of them and try launching the tool again.", row=0, column=0)
+    app.stopFrame()
+
+    app.startFrame('modal te2', row=1, column=0)
+    app.setPadding([60,10])
+    app.addButton('Download Visual Studio Code', btnPress, row=0, column=0)
+    app.addButton('Download Sublime Text 3', btnPress, row=0, column=1)
+    app.addButton(' Close ', btnPress, row=0, column=2)
+    app.stopFrame()
+
+    app.stopSubWindow()
 
     # start the GUI
     app.go()

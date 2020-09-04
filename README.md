@@ -16,4 +16,7 @@ Sublime Text 3 extensions and configurations for better log reading:
   Add this lines in the settings json file to solve the 2 windows opening
     "hot_exit": false,
     "remember_open_files": false
+    
+    
+# Report bug
 

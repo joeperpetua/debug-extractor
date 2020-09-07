@@ -16,8 +16,8 @@ Visual Studio Code extensions and configurations for better log reading:
   - In user setting .json file add this lines to support all the different files the debug.dat file contains:
   ```markdown
   "files.associations": {
-    "*.log.*": "log"
-    "messages": "log"
+    "*.log.*": "log",
+    "messages": "log",
     "*.error.*": "log"
   },
   ```

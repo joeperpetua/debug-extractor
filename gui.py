@@ -3,6 +3,7 @@ import sys
 import subprocess
 import os
 import random
+from shutil import rmtree
 from os import sep as bar
 from datetime import datetime
 from shutil import copyfile
@@ -51,17 +52,9 @@ def openWithVS(path, name):
     if result.stderr:
         print(cmdVScode, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
         app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode \n" + result.stderr.decode('utf-8'))
-        # if os.path.exists("C:" + bar + "tickets" + bar + name):
-        #     os.system("C:" + bar + "tickets" + bar + name)
-    # try:
-    #     os.system(cmdVScode)
-    # except Exception as err:
-    #     print(str(datetime.now()) + " debug analizer: Error occurred while launching VScode! \n")
-    #     exc_type, exc_obj, exc_tb = sys.exc_info()
-    #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-    #     print("Type error: " + str(err))
-    #     print('File Name:', fname, 'Line Numer:', exc_tb.tb_lineno, end = '\n\n')   
-    #     app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode! \nType error: " + str(err) + '\nFile Name:' + fname + 'Line Numer:' + exc_tb.tb_lineno)
+        # Delete extracted folder in case of error while opening
+        if os.path.exists("C:" + bar + "tickets" + bar + name):
+            rmtree("C:" + bar + "tickets" + bar + name)
 
 
 def openWithSub(path, name):
@@ -78,24 +71,18 @@ def openWithSub(path, name):
     cmdSubl = sublimeExecutable + ' -a ' + destination + name
     result = subprocess.run(cmdSubl, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     if result.stderr:
-        print(cmdSubl, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
+        print(cmdSubl, 'err -> ' + result.stderr.decode('utf-8'))
         app.errorBox("Cannot run Sublime Text", str(datetime.now()) + " debug analizer: Error occurred while launching Sublime Text 3! \n" + result.stderr.decode('utf-8'))
-    # try:
-    #     result = subprocess.run(cmdSubl, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #     print(cmdSubl, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
-    # except Exception as err:
-    #     print(str(datetime.now()) + " debug analizer: Error occurred while launching Sublime Text 3! \n")
-    #     exc_type, exc_obj, exc_tb = sys.exc_info()
-    #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-    #     print("Type error: " + str(err))
-    #     print('File Name:', fname, 'Line Numer:', exc_tb.tb_lineno, end = '\n\n')    
-    #     app.errorBox("Cannot run Sublime Text", str(datetime.now()) + " debug analizer: Error occurred while launching Sublime Text 3! \nType error: " + str(err) + "\nFile Name:" + str(fname) + "\nLine Numer:" + str(exc_tb.tb_lineno))
+        # Delete extracted folder in case of error while opening
+        if os.path.exists("C:" + bar + "tickets" + bar + name):
+            rmtree("C:" + bar + "tickets" + bar + name)
 
 
 def unZip(path, name):
     print('unzip :' + path + "\nwith name : " + name)
     cmd7z = "7z" + ' x ' + path + ' -bsp1 -o' + destination + name
 
+    # Lazy way of doing the progress bar
     for x in range(0, 11):
         app.setMeter("progress", x*random.randint(1, 10))
 
@@ -107,19 +94,6 @@ def unZip(path, name):
         return 0
     app.setMeter("progress", 100)
 
-    # try:
-    #     for x in range(0, 11):
-    #         app.setMeter("progress", x*random.randint(1, 10))
-    #     os.system(cmd7z)
-    #     app.setMeter("progress", 100)
-
-    # except Exception as err:
-    #     print(str(datetime.now()) + " debug analizer: Error occurred while extracting file! \n")
-    #     exc_type, exc_obj, exc_tb = sys.exc_info()
-    #     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-    #     print("Type error: " + str(err))
-    #     print('File Name:', fname, 'Line Numer:', exc_tb.tb_lineno, end = '\n\n')
-    #     app.errorBox("Cannot extract", str(datetime.now()) + " debug analizer: Error occurred while extracting file! \nType error: " + str(err) + '\nFile Name:' + fname + 'Line Numer:' + exc_tb.tb_lineno)
 
 
 # Events

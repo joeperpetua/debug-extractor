@@ -256,7 +256,7 @@ if app:
     app.addLabel("name label", "Ticket n.", row=0, column=0, colspan=2)
     app.addEntry("fileName", row=0, column=3)
     app.setEntryRelief("fileName", "groove")
-    app.setEntryTooltip("fileName", "If no name is provided a random name will be assigned")
+    #app.setEntryTooltip("fileName", "If no name is provided a random name will be assigned")
     # File input
     app.addLabel("file label", "Select debug file", row=1, column=0, colspan=2)
     app.setPadding([5,5])
@@ -267,8 +267,19 @@ if app:
     app.setPadding([0,0])
     app.stopFrame()
 
+    app.startFrame('choice')
+    app.setFg('grey', override=False)
+    app.setSticky("w")
+    app.addCheckBox("Delete debug file after extracting it\n(the extracted directory will remain)")
+    app.addCheckBox("Open the debug analyzer tool in a new\nbrowser window")
+    app.stopFrame()
+
+    # app.addCheckBox("Delete debug file after extracting it (the extracted directory will remain)")
+    # app.addCheckBox("Open the debug analyzer tool in a new browser window")
 
     app.startFrame("buttons", row=3, column=0)
+    app.setSticky("ew")
+    app.setFg('white', override=False)
     app.addLabel("Choose", "Open with:", row=0, column=0)
     app.addButtons(["vscode", "sublime"], btnPress,row=1, column=0,)
     app.setButtonImage("vscode", "img/vscode.gif")

@@ -158,6 +158,8 @@ def check(path, btn):
     if name == '':
         print('name not set, ticket will be saved with default name')
         name = 'default_' + str(random.randint(0, 999999))
+        # Fix crash when no name provided
+        destination = "C:" + bar + "tickets" + bar + name + bar
     elif os.path.exists(destination):
         print('Ticket already exists')
         ticketExist = app.questionBox("Existing ticket", "Ticket already exists, do you want to create a subfolder under the existing one to have the two versions?\nIf not, it will be overwritten.", parent=None)
@@ -247,11 +249,11 @@ def check(path, btn):
     if unZip(path, name) == 0:
         return 0
     
-    if app.getRadioButton("debug") == "Move debug file to extracted folder":
+    if app.getRadioButton("debug") == "Move .dat file to extracted folder":
         print("moveDebug")
         os.replace(path, destination  + name + ".dat")
 
-    if app.getRadioButton("debug") == "Delete debug file after extracting it\n(the extracted directory will remain)":
+    if app.getRadioButton("debug") == "Delete .dat file after extracting it\n(the extracted directory will remain)":
         print("delDebug")
         os.remove(path)
     

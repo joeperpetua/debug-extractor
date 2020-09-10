@@ -53,8 +53,8 @@ def openWithVS(path, name):
         print(cmdVScode, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
         app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode \n" + result.stderr.decode('utf-8'))
         # Delete extracted folder in case of error while opening
-        if os.path.exists("C:" + bar + "tickets" + bar + name):
-            rmtree("C:" + bar + "tickets" + bar + name)
+        if os.path.exists(destination + name):
+            rmtree(destination + name)
 
 
 def openWithSub(path, name):
@@ -74,8 +74,8 @@ def openWithSub(path, name):
         print(cmdSubl, 'err -> ' + result.stderr.decode('utf-8'))
         app.errorBox("Cannot run Sublime Text", str(datetime.now()) + " debug analizer: Error occurred while launching Sublime Text 3! \n" + result.stderr.decode('utf-8'))
         # Delete extracted folder in case of error while opening
-        if os.path.exists("C:" + bar + "tickets" + bar + name):
-            rmtree("C:" + bar + "tickets" + bar + name)
+        if os.path.exists(destination + name):
+            rmtree(destination + name)
 
 
 def unZip(path, name):
@@ -111,10 +111,10 @@ def btnPress(btn):
         check(path, name, btn)
     
     if btn == 'Help':
-        os.system('START "" https://github.com/joeperpetua/debug-analyzer#debug-analyzer')
+        os.system('START "" https://github.com/joeperpetua/debug-analyzer#debug-analyzer-docs')
 
     if btn == 'Report Bug':
-        os.system('START "" https://github.com/joeperpetua/debug-analyzer#report-bug')
+        os.system('START "" https://github.com/joeperpetua/debug-analyzer#bug-report')
     
     if btn == 'Close' or btn == ' Close ':
         app.hideAllSubWindows()
@@ -225,6 +225,17 @@ def check(path, name, btn):
         
     if unZip(path, name) == 0:
         return 0
+    
+    if app.getRadioButton("debug") == "Move debug file to extracted folder":
+        print("moveDebug")
+        os.replace(path, destination + name + bar + name + ".dat")
+
+    if app.getRadioButton("debug") == "Delete debug file after extracting it\n(the extracted directory will remain)":
+        print("delDebug")
+        os.remove(path)
+    
+    if app.getCheckBox("openDebug"):
+        os.system('START "" http://192.168.40.40/debug/')
 
     if btn == 'vscode':
         openWithVS(path, name)
@@ -270,8 +281,9 @@ if app:
     app.startFrame('choice')
     app.setFg('grey', override=False)
     app.setSticky("w")
-    app.addCheckBox("Delete debug file after extracting it\n(the extracted directory will remain)")
-    app.addCheckBox("Open the debug analyzer tool in a new\nbrowser window")
+    app.addRadioButton("debug", "Move debug file to extracted folder")
+    app.addRadioButton("debug", "Delete debug file after extracting it\n(the extracted directory will remain)")
+    app.addNamedCheckBox("Open the debug analyzer tool in a new browser\nwindow (you will need the debug file to do so)", "openDebug")
     app.stopFrame()
 
     # app.addCheckBox("Delete debug file after extracting it (the extracted directory will remain)")
@@ -310,6 +322,9 @@ if app:
     app.setButtonRelief("Report Bug", "flat")
     app.stopFrame()
 
+    # --------------
+    # SUBWINDOWS
+    # --------------
 
     app.startSubWindow('7zip not found', modal=True)
     app.setBg('#263238', override=False, tint=False)

@@ -1,6 +1,6 @@
 # Debug Analyzer Docs
 
-Description
+Tool to open debug files from Synology servers. Read documentation for more information about setup with the text editors and how the tool works. 
 
 ## Requirements
 - [7zip](https://www.7-zip.org/download.html)

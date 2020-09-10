@@ -175,7 +175,7 @@ def check(path, btn):
             
         else:
             print("Overwrite")
-            pass
+            rmtree(destination)
         
 
     # Check if programs are installed

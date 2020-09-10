@@ -303,8 +303,8 @@ if app:
     app.startFrame('choice')
     app.setFg('grey', override=False)
     app.setSticky("w")
-    app.addRadioButton("debug", "Move debug file to extracted folder")
-    app.addRadioButton("debug", "Delete debug file after extracting it\n(the extracted directory will remain)")
+    app.addRadioButton("debug", "Move .dat file to extracted folder")
+    app.addRadioButton("debug", "Delete .dat file after extracting it\n(the extracted directory will remain)")
     app.addNamedCheckBox("Open the debug analyzer tool in a new browser\nwindow (you will need the debug file to do so)", "openDebug")
     app.stopFrame()
 

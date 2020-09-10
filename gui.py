@@ -46,15 +46,16 @@ def clearFileInput():
 
 def openWithVS(path, name):
     print('vs :' + path + " with name : " + name)   
-    cmdVScode = "code " + destination + name
+    #cmdVScode = "code " + destination + name
+    cmdVScode = "code " + destination
 
     result = subprocess.run(cmdVScode, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     if result.stderr:
         print(cmdVScode, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
         app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode \n" + result.stderr.decode('utf-8'))
         # Delete extracted folder in case of error while opening
-        if os.path.exists(destination + name):
-            rmtree(destination + name)
+        if os.path.exists(destination):
+            rmtree(destination)
 
 
 def openWithSub(path, name):
@@ -68,19 +69,19 @@ def openWithSub(path, name):
     else:
         sublimeExecutable = '"C:' + bar + 'Program Files (x86)' + bar + 'Sublime Text 3' + bar + 'subl.exe"'
     
-    cmdSubl = sublimeExecutable + ' -a ' + destination + name
+    cmdSubl = sublimeExecutable + ' -a ' + destination
     result = subprocess.run(cmdSubl, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     if result.stderr:
         print(cmdSubl, 'err -> ' + result.stderr.decode('utf-8'))
         app.errorBox("Cannot run Sublime Text", str(datetime.now()) + " debug analizer: Error occurred while launching Sublime Text 3! \n" + result.stderr.decode('utf-8'))
         # Delete extracted folder in case of error while opening
-        if os.path.exists(destination + name):
-            rmtree(destination + name)
+        if os.path.exists(destination):
+            rmtree(destination)
 
 
 def unZip(path, name):
     print('unzip :' + path + "\nwith name : " + name)
-    cmd7z = "7z" + ' x ' + path + ' -bsp1 -o' + destination + name
+    cmd7z = "7z" + ' x ' + path + ' -bsp1 -o' + destination
 
     # Lazy way of doing the progress bar
     for x in range(0, 11):
@@ -89,7 +90,7 @@ def unZip(path, name):
     result = subprocess.run(cmd7z, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     if result.stderr:
         print(cmd7z, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
-        app.errorBox("Cannot extract file", str(datetime.now()) + " debug analizer: Error occurred while extracting file \n" + result.stderr.decode('utf-8'))
+        app.errorBox("Cannot extract file", str(datetime.now()) + " debug analizer: Error occurred while extracting file \n" + result.stderr.decode('utf-8') + "\nPlease check if the file is corrupted and try again.")
         app.setMeter("progress", 0)
         return 0
     app.setMeter("progress", 100)
@@ -98,6 +99,7 @@ def unZip(path, name):
 
 # Events
 def btnPress(btn):
+    global name
     if btn == 'X':
         clearFileInput()
     else:
@@ -105,10 +107,10 @@ def btnPress(btn):
         path = app.getEntry("file")
 
     if btn == 'vscode':
-        check(path, name, btn)
+        check(path, btn)
 
     if btn == 'sublime':
-        check(path, name, btn)
+        check(path, btn)
     
     if btn == 'Help':
         os.system('START "" https://github.com/joeperpetua/debug-analyzer#debug-analyzer-docs')
@@ -129,7 +131,9 @@ def btnPress(btn):
         os.system('START "" https://www.7-zip.org/download.html')
 
 
-def check(path, name, btn):
+def check(path, btn):
+    global destination
+    global name
     # Check path possible scenarios
     if path == '':
         print('please select a file')
@@ -147,15 +151,32 @@ def check(path, name, btn):
             app.errorBox("File not supported", "The tool supports only 'dat', 'zip', 'rar', 'tar', '7z', 'gzip' file extensions...\nCheck it")
             return 0
 
-    
+    # C:\tickets\name\
+    destination += name + bar
+
     # Check directory name possible scenarios
     if name == '':
         print('name not set, ticket will be saved with default name')
         name = 'default_' + str(random.randint(0, 999999))
-    elif os.path.exists(destination + name):
+    elif os.path.exists(destination):
         print('Ticket already exists')
-        app.warningBox("Existing ticket", "Ticket already exists, please try with another custom name", parent=None)
-        return 0
+        ticketExist = app.questionBox("Existing ticket", "Ticket already exists, do you want to create a subfolder under the existing one to have the two versions?\nIf not, it will be overwritten.", parent=None)
+        # Returns True if create a subfolder, False if overwrite
+        if ticketExist:
+            if os.path.exists(destination + name + "v2"):
+                app.warningBox("Existing ticket", "Cannot have more than 2 version, please delete the newer version or change its directory name.", parent=None)
+                return 0
+        
+            print("Create subfolder")
+            name += "v2"
+            # C:\tickets\name\namev2\
+            destination += name + bar
+            os.mkdir(destination)
+            
+        else:
+            print("Overwrite")
+            pass
+        
 
     # Check if programs are installed
     
@@ -228,7 +249,7 @@ def check(path, name, btn):
     
     if app.getRadioButton("debug") == "Move debug file to extracted folder":
         print("moveDebug")
-        os.replace(path, destination + name + bar + name + ".dat")
+        os.replace(path, destination  + name + ".dat")
 
     if app.getRadioButton("debug") == "Delete debug file after extracting it\n(the extracted directory will remain)":
         print("delDebug")
@@ -242,7 +263,8 @@ def check(path, name, btn):
 
     if btn == 'sublime':
         openWithSub(path, name)  
-    
+
+    destination = "C:" + bar + "tickets" + bar
   
 
 # Render GUI

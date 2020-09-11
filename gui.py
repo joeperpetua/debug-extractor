@@ -81,7 +81,7 @@ def openWithSub(path, name):
 
 def unZip(path, name):
     print('unzip :' + path + "\nwith name : " + name)
-    cmd7z = "7z" + ' x ' + path + ' -bsp1 -o' + destination
+    cmd7z = '7z' + ' x "' + path + '" -bsp1 -o' + destination
 
     # Lazy way of doing the progress bar
     for x in range(0, 11):

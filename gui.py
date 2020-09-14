@@ -26,7 +26,7 @@ app.setIcon('img/debug.gif')
 app.setFg('white', override=False)
 app.setBg('#263238', override=False, tint=False)
 app.setFont(size=12, family="Verdana", underline=False, slant="roman")
-
+app.setLogFile('error.log')
 
 def launchSubWindow(win):
     app.showSubWindow(win)
@@ -53,6 +53,7 @@ def openWithVS(path, name):
     if result.stderr:
         print(cmdVScode, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
         app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode \n" + result.stderr.decode('utf-8'))
+        app.error("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode /// " + result.stderr.decode('utf-8'))
         # Delete extracted folder in case of error while opening
         if os.path.exists(destination):
             rmtree(destination)
@@ -75,6 +76,7 @@ def openWithSub(path, name):
     if result.stderr:
         print(cmdSubl, 'err -> ' + result.stderr.decode('utf-8'))
         app.errorBox("Cannot run Sublime Text", str(datetime.now()) + " debug analizer: Error occurred while launching Sublime Text 3! \n" + result.stderr.decode('utf-8'))
+        app.error("Cannot run Sublime Text /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching Sublime Text 3! /// " + result.stderr.decode('utf-8'))
         # Delete extracted folder in case of error while opening
         if os.path.exists(destination):
             rmtree(destination)
@@ -93,6 +95,7 @@ def unZip(path, name):
     if result.stderr:
         print(cmd7z, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
         app.errorBox("Cannot extract file", str(datetime.now()) + " debug analizer: Error occurred while extracting file \n" + result.stderr.decode('utf-8') + "\nPlease check if the file is corrupted and try again.")
+        app.error("Cannot extract file" + " /// debug analizer: Error occurred while extracting file /// " + result.stderr.decode('utf-8') + " /// Please check if the file is corrupted and try again.")
         app.setMeter("progress", 0)
         return 0
     app.setMeter("progress", 100)
@@ -101,6 +104,7 @@ def unZip(path, name):
 
 # Events
 def btnPress(btn):
+    global path
     global name
     if btn == 'X':
         clearFileInput()
@@ -109,10 +113,10 @@ def btnPress(btn):
         path = app.getEntry("file")
 
     if btn == 'vscode':
-        check(path, btn)
+        check(btn)
 
     if btn == 'sublime':
-        check(path, btn)
+        check(btn)
     
     if btn == 'Help':
         os.system('START "" https://github.com/joeperpetua/debug-analyzer#debug-analyzer-docs')
@@ -133,24 +137,30 @@ def btnPress(btn):
         os.system('START "" https://www.7-zip.org/download.html')
 
 
-def check(path, btn):
+def check(btn):
     global destination
     global name
+    global path
+    global supported
+
+    # print('--------------------------------------------------------------------------------------------------------- ', path)
     # Check path possible scenarios
     if path == '':
         print('please select a file')
         app.warningBox("No file selected", "Please select a file to analyze", parent=None)
+        app.info("No file selected /// Please select a file to analyze")
         return 0
     elif os.path.exists(path):
         print('path exists')
         for element in supportedFiles:
             if path.endswith(element):
-                global supported
                 supported = True
                 print('file type supported: ' + element)
-        
+
+            # print('file is supported: ' + str(supported))
         if not supported:
             app.errorBox("File not supported", "The tool supports only 'dat', 'zip', 'rar', 'tar', '7z', 'gzip' file extensions...\nCheck it")
+            app.warn("File not supported /// The tool supports only 'dat', 'zip', 'rar', 'tar', '7z', 'gzip' file extensions...")
             return 0
 
     # C:\tickets\name\
@@ -165,10 +175,12 @@ def check(path, btn):
     elif os.path.exists(destination):
         print('Ticket already exists')
         ticketExist = app.questionBox("Existing ticket", "Ticket already exists, do you want to create a subfolder under the existing one to have the two versions?\nIf not, it will be overwritten.", parent=None)
+        app.warn("Existing File, running double ticket process")
         # Returns True if create a subfolder, False if overwrite
         if ticketExist:
             if os.path.exists(destination + name + "v2"):
                 app.warningBox("Existing ticket", "Cannot have more than 2 version, please delete the newer version or change its directory name.", parent=None)
+                app.error("More than two versions already, cannot make a third /// return 0")
                 return 0
         
             print("Create subfolder")
@@ -271,7 +283,8 @@ def check(path, btn):
 
 
     destination = "C:" + bar + "tickets" + bar
-  
+    path = ''
+    supported = False
 
 # Render GUI
 if app:

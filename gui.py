@@ -56,6 +56,7 @@ def openWithVS(path, name):
         # Delete extracted folder in case of error while opening
         if os.path.exists(destination):
             rmtree(destination)
+        return 0
 
 
 def openWithSub(path, name):
@@ -77,6 +78,7 @@ def openWithSub(path, name):
         # Delete extracted folder in case of error while opening
         if os.path.exists(destination):
             rmtree(destination)
+        return 0
 
 
 def unZip(path, name):
@@ -248,6 +250,12 @@ def check(path, btn):
         
     if unZip(path, name) == 0:
         return 0
+
+    if btn == 'vscode':
+        openWithVS(path, name)
+
+    if btn == 'sublime':
+        openWithSub(path, name)  
     
     if app.getRadioButton("debug") == "Move .dat file to extracted folder":
         print("moveDebug")
@@ -260,11 +268,7 @@ def check(path, btn):
     if app.getCheckBox("openDebug"):
         os.system('START "" http://192.168.40.40/debug/')
 
-    if btn == 'vscode':
-        openWithVS(path, name)
 
-    if btn == 'sublime':
-        openWithSub(path, name)  
 
     destination = "C:" + bar + "tickets" + bar
   

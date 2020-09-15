@@ -1,4 +1,4 @@
-# Debug Analyzer Docs
+# Debug Extractor Docs
 
 Tool to open debug files from Synology servers. Read documentation for more information about setup with the text editors and how the tool works. 
 

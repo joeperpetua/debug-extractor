@@ -23,6 +23,10 @@ Visual Studio Code extensions and configurations for better log reading:
   ```
 - Extensions:
   - [Log File Highlighter](https://marketplace.visualstudio.com/items?itemName=emilast.LogFileHighlighter&ssr=false#overview)
+- Useful shortcuts:
+  - __Search keyword in all files:__ Ctrl + Shift + F
+  - __Find keyword in opened file:__ Ctrl + F
+  - __Search file:__ Ctrl + E __or__ Ctrl + P
     
 ### Sublime Text 3
 Sublime Text 3 extensions and configurations for better log reading:

@@ -119,10 +119,10 @@ def btnPress(btn):
         check(btn)
     
     if btn == 'Help':
-        os.system('START "" https://github.com/joeperpetua/debug-analyzer#debug-analyzer-docs')
+        os.system('START "" https://github.com/joeperpetua/debug-extractor#debug-extractor-docs')
 
     if btn == 'Report Bug':
-        os.system('START "" https://github.com/joeperpetua/debug-analyzer#bug-report')
+        os.system('START "" https://github.com/joeperpetua/debug-extractor#bug-report')
     
     if btn == 'Close' or btn == ' Close ':
         app.hideAllSubWindows()
@@ -308,6 +308,7 @@ if app:
     app.addLabel("name label", "Ticket n.", row=0, column=0, colspan=2)
     app.addEntry("fileName", row=0, column=3)
     app.setEntryRelief("fileName", "groove")
+    app.addMenuEdit(inMenuBar=False)
     #app.setEntryTooltip("fileName", "If no name is provided a random name will be assigned")
     # File input
     app.addLabel("file label", "Select debug file", row=1, column=0, colspan=2)

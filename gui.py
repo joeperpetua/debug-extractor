@@ -31,6 +31,8 @@ app.setLogFile('error.log')
 def launchSubWindow(win):
     app.showSubWindow(win)
 
+def openSettings():
+    app.showSubWindow('Settings')
 
 def isx64():
     if 'PROCESSOR_ARCHITEW6432' in os.environ:
@@ -278,7 +280,7 @@ def check(btn):
         os.remove(path)
     
     if app.getCheckBox("openDebug"):
-        os.system('START "" http://192.168.40.40/debug/')
+        os.system('START "" https://tpkrtevx.vpnsupport.synology.me:4444/debug/')
 
 
 
@@ -288,6 +290,7 @@ def check(btn):
 
 # Render GUI
 if app:
+    app.addMenuList("Settings", ["Change settings"], openSettings)
     #app.setSticky("news")
     #app.setExpand("both")
     app.setStretch("both")
@@ -408,6 +411,10 @@ if app:
     app.addButton(' Close ', btnPress, row=0, column=2)
     app.stopFrame()
 
+    app.stopSubWindow()
+
+    app.startSubWindow("Settings", modal=True)
+    app.addLabel('labelPaths', 'Add custom paths for the required programs')
     app.stopSubWindow()
 
     # start the GUI

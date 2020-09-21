@@ -313,18 +313,23 @@ if app:
     app.addLabel("file label", "Select debug file", row=1, column=0, colspan=2)
     app.setPadding([5,5])
     app.addFileEntry("file", row=1, column=3, colspan=1)
+    app.setAddFileEntryCursor("file", "hand2")
     app.addButton("X", btnPress, row=1, column=4)
     app.setButtonBg("X", "#e5806c")
     app.setButtonRelief("X", "flat")
+    app.setButtonCursor("X", "hand2")
     app.setPadding([0,0])
     app.stopFrame()
 
     app.startFrame('choice')
     app.setFg('grey', override=False)
     app.setSticky("w")
+
     app.addRadioButton("debug", "Move .dat file to extracted folder")
     app.addRadioButton("debug", "Delete .dat file after extracting it\n(the extracted directory will remain)")
+    app.setRadioButtonCursor("debug", "hand2")
     app.addNamedCheckBox("Open the debug analyzer tool in a new browser\nwindow (you will need the debug file to do so)", "openDebug")
+
     app.stopFrame()
 
     # app.addCheckBox("Delete debug file after extracting it (the extracted directory will remain)")
@@ -338,10 +343,12 @@ if app:
     app.setButtonImage("vscode", "img/vscode.gif")
     app.setButtonBg("vscode", "#192227")
     app.setButtonRelief("vscode", "flat")
+    app.setButtonCursor("vscode", "hand2")
 
     app.setButtonImage("sublime", "img/sublime.gif")
     app.setButtonBg("sublime", "#192227")
     app.setButtonRelief("sublime", "flat")
+    app.setButtonCursor("sublime", "hand2")
     # app.setPadding([60,100])
     app.addMeter("progress", row=2, column=0)
     app.setMeterFill("progress", "#192227")
@@ -354,6 +361,7 @@ if app:
     app.setButtonBg("Help", "#4a4e50")
     app.setButtonFg("Help", "#ffffff")
     app.setButtonRelief("Help", "flat")
+    app.setButtonCursor("Help", "hand2")
     app.setSticky("ew")
     app.addImage("logo", "img/logo.gif", row=0, column=1, colspan=2, rowspan=1)
     app.setSticky("e")
@@ -361,6 +369,7 @@ if app:
     app.setButtonBg("Report Bug", "#4a4e50")
     app.setButtonFg("Report Bug", "#ffffff")
     app.setButtonRelief("Report Bug", "flat")
+    app.setButtonCursor("Report Bug", "hand2")
     app.stopFrame()
 
     # --------------

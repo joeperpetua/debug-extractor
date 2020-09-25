@@ -3,13 +3,19 @@ import sys
 import subprocess
 import os
 import random
-from shutil import rmtree
+import config
+import yaml
 from os import sep as bar
+from shutil import rmtree
 from datetime import datetime
 from shutil import copyfile
 from appJar import gui
-sevenZipExecutable = "7z"
-codeExecutable = "code"
+
+with open("config.yml", "r") as ymlfile:
+    conf = yaml.load(ymlfile, Loader=yaml.FullLoader)
+
+sevenZipExecutable = ""
+codeExecutable = ""
 # Sublime is not set by default in PATH so it will be executed from
 # the .exe path that is installed on the PC, the var will be overwritten in the arch check
 sublimeExecutable = ""
@@ -32,13 +38,14 @@ def launchSubWindow(win):
     app.showSubWindow(win)
 
 def openSettings():
-    app.showSubWindow('Settings')
+    app.hideAllSubWindows()
+    os.system("notepad config.yml")
+    #app.showSubWindow('Settings')
 
 def isx64():
     if 'PROCESSOR_ARCHITEW6432' in os.environ:
         return True
     return os.environ['PROCESSOR_ARCHITECTURE'].endswith('64')
-
 
 def clearFileInput():
     print('clear file')
@@ -49,7 +56,7 @@ def clearFileInput():
 def openWithVS(path, name):
     print('vs :' + path + " with name : " + name)   
     #cmdVScode = "code " + destination + name
-    cmdVScode = "code " + destination
+    cmdVScode = '"' + codeExecutable + '" ' + destination
 
     result = subprocess.run(cmdVScode, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     if result.stderr:
@@ -64,16 +71,8 @@ def openWithVS(path, name):
 
 def openWithSub(path, name):
     print('sub :' + path + " with name : " + name)
-
-    # Did this because env PATH is not created for sublime by default on installation,
-    # plus didn't know how to use global vars in py so I made the local one here,
-    # should change later to directly overwrite in original if
-    if isx64():
-        sublimeExecutable = '"C:' + bar + 'Program Files' + bar + 'Sublime Text 3' + bar + 'subl.exe"'
-    else:
-        sublimeExecutable = '"C:' + bar + 'Program Files (x86)' + bar + 'Sublime Text 3' + bar + 'subl.exe"'
     
-    cmdSubl = sublimeExecutable + ' -a ' + destination
+    cmdSubl = '"' + sublimeExecutable + '" -a ' + destination
     result = subprocess.run(cmdSubl, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     if result.stderr:
         print(cmdSubl, 'err -> ' + result.stderr.decode('utf-8'))
@@ -87,7 +86,7 @@ def openWithSub(path, name):
 
 def unZip(path, name):
     print('unzip :' + path + "\nwith name : " + name)
-    cmd7z = '7z' + ' x "' + path + '" -bsp1 -o' + destination
+    cmd7z = '"' + sevenZipExecutable + '" x "' + path + '" -bsp1 -o' + destination
 
     # Lazy way of doing the progress bar
     for x in range(0, 11):
@@ -126,9 +125,10 @@ def btnPress(btn):
     if btn == 'Report Bug':
         os.system('START "" https://github.com/joeperpetua/debug-extractor#bug-report')
     
-    if btn == 'Close' or btn == ' Close ':
+    if btn == 'Close':
         app.hideAllSubWindows()
     
+
     if btn == 'Download Visual Studio Code':
         os.system('START "" https://code.visualstudio.com/download')
 
@@ -144,6 +144,9 @@ def check(btn):
     global name
     global path
     global supported
+    global sevenZipExecutable
+    global codeExecutable
+    global sublimeExecutable
 
     # print('--------------------------------------------------------------------------------------------------------- ', path)
     # Check path possible scenarios
@@ -197,71 +200,75 @@ def check(btn):
         
 
     # Check if programs are installed
-    
-    canRun = 0
-    #x64
-    if isx64():
 
-        #7z64 \\ C:\Program Files\7-Zip\7z.exe
-        if os.path.exists('C:' + bar + 'Program Files' + bar + '7-Zip' + bar + '7z.exe'):
-            print('7z found')
-            canRun += 1
-            pass
-        else:
-            print('7z64 not found')
-            launchSubWindow('7zip not found')
-            return 0
-
-        #VScode64 \\ C:Users\USER\AppData\Local\Programs\Microsoft VS Code\code.exe
-        if os.path.exists('C:' + bar + 'Users' + bar + os.getlogin() + bar + 'AppData' + bar + 'Local' + bar + 'Programs' + bar + 'Microsoft VS Code' + bar + 'code.exe'):
-            print('VScode found')
-            canRun += 1
-            pass
-        else:
-            print('VScode64 not found')
-
-        #Sublime64 \\ C:\Program Files\Sublime Text 3\subl.exe
-        if os.path.exists('C:' + bar + 'Program Files' + bar + 'Sublime Text 3' + bar + 'subl.exe'):
-            print('Sublime Text 3 found')
-            canRun += 1
-            pass
-        else:
-            print('Sublime Text 3 64 not found')
-            if canRun <= 1:
-                launchSubWindow('Text editor not found')
-                return 0
-    #x86
+    #7z64 \\ C:\Program Files\7-Zip\7z.exe
+    #7z86 \\ C:\Program Files (x86)\7-Zip\7z.exe
+    if conf['custom_path']['sevenZip'] != 'path' and os.path.exists(conf['custom_path']['sevenZip']):
+        print('custom 7z found')
+        sevenZipExecutable = conf['custom_path']['sevenZip']
+    elif os.path.exists(config.path['x64']['sevenZip']):
+        print('x64 7z found')
+        sevenZipExecutable = config.path['x64']['sevenZip']
+        pass
+    elif os.path.exists(config.path['x86']['sevenZip']):
+        print('x86 7z found')
+        sevenZipExecutable = config.path['x86']['sevenZip']
+        pass
     else:
-        
-        #7z86 \\ C:\Program Files (x86)\7-Zip\7z.exe 
-        if os.path.exists('C:' + bar + 'Program Files (x86)' + bar + '7-Zip' + bar + '7z.exe'):
-            print('7z found')
-            canRun += 1
-            pass
-        else:
-            print('7z not found')
-            launchSubWindow('7zip not found')
-            return 0
+        print('7z64 not found')
+        launchSubWindow('7zip not found')
+        return 0
 
-        #VScode
-        if os.path.exists('C:' + bar + 'Users' + bar + os.getlogin() + bar + 'AppData' + bar + 'Local' + bar + 'Programs' + bar + 'Microsoft VS Code' + bar + 'code.exe'):
-            print('VScode found')
-            canRun += 1
-            pass
-        else:
-            print('VScode not found')
+    canRun = 0
 
-        #Sublime86  \\ C:\Program Files (x86)\Sublime Text 3\subl.exe 
-        if os.path.exists('C:' + bar + 'Program Files (x86)' + bar + 'Sublime Text 3' + bar + 'subl.exe'):
-            print('Sublime Text 3 found')
-            canRun += 1
-            pass
-        else:
-            print('Sublime Text 3 not found')
-            if canRun <= 1:
-                launchSubWindow('Text Editor not found')
-                return 0
+    #VScode64 \\ C:Users\USER\AppData\Local\Programs\Microsoft VS Code\code.exe
+    if conf['custom_path']['VScode'] != 'path' and os.path.exists(conf['custom_path']['VScode']):
+        print('custom VScode found')
+        codeExecutable = conf['custom_path']['VScode']
+        canRun += 1
+        pass
+    elif os.path.exists(config.path['x64']['VScode']):
+        print('x64 VScode found')
+        codeExecutable = config.path['x64']['VScode']
+        canRun += 1
+        pass
+    elif os.path.exists(config.path['x86']['VScode']):
+        print('x86 VScode found')
+        codeExecutable = config.path['x86']['VScode']
+        canRun += 1
+        pass
+    else:
+        print('VScode not found')
+        pass
+
+
+    #Sublime64 \\ C:\Program Files\Sublime Text 3\subl.exe
+    #Sublime86 \\ C:\Program Files (x86)\Sublime Text 3\subl.exe 
+    if conf['custom_path']['SUB'] != 'path' and os.path.exists(conf['custom_path']['SUB']):
+        print('Custom Sublime Text 3 found')
+        sublimeExecutable = conf['custom_path']['SUB']
+        canRun += 1
+    elif os.path.exists(config.path['x64']['SUB']):
+        print('x64 Sublime Text 3 found')
+        sublimeExecutable = config.path['x64']['SUB']
+        canRun += 1
+        pass
+    elif os.path.exists(config.path['x86']['SUB']):
+        print('x86 Sublime Text 3 found')
+        sublimeExecutable = config.path['x86']['SUB']
+        canRun += 1
+        pass
+    else:
+        print('Sublime Text 3 64 not found')
+        pass
         
+
+    # Verify flag
+    if canRun < 1:
+        launchSubWindow('Text editor not found')
+        return 0
+
+
     if unZip(path, name) == 0:
         return 0
 
@@ -385,13 +392,13 @@ if app:
     app.setPadding([60,60])
 
     app.startFrame('modal 7z', row=0, column=0)
-    app.addLabel("7zip not found message", "The program 7zip was not found in your system, this is a required\nprogram to run the tool, please install it and try launching the tool again.", row=0, column=0)
+    app.addLabel("7zip not found message", "The program 7zip was not found in your system, this is a required\nprogram to run the tool, please install it and try launching the tool again.\n\nYou can also set a custom path in case you have installed the programs in another path than the default one.", row=0, column=0)
     app.stopFrame()
 
     app.startFrame('modal 7z2', row=1, column=0)
     app.setPadding([60,10])
     app.addButton('Download 7zip', btnPress, row=0, column=0)
-    app.addButton('Close', btnPress, row=0, column=1)
+    app.addButton(' Set custom path ', openSettings, row=0, column=1)
     app.stopFrame()
 
     app.stopSubWindow()
@@ -401,21 +408,62 @@ if app:
     app.setPadding([60,60])
 
     app.startFrame('modal te', row=0, column=0)
-    app.addLabel("Lb not found message", "The tool could not find nor Visual Studio Code nor Sublime Text 3,\nat least one of them is required to run the tool,\nplease install either of them and try launching the tool again.", row=0, column=0)
+    app.addLabel("Lb not found message", "The tool could not find nor Visual Studio Code nor Sublime Text 3,\nat least one of them is required to run the tool,\nplease install either of them and try launching the tool again.\n\nYou can also set a custom path in case you have installed the programs in another path than the default one.", row=0, column=0)
     app.stopFrame()
 
     app.startFrame('modal te2', row=1, column=0)
     app.setPadding([60,10])
     app.addButton('Download Visual Studio Code', btnPress, row=0, column=0)
     app.addButton('Download Sublime Text 3', btnPress, row=0, column=1)
-    app.addButton(' Close ', btnPress, row=0, column=2)
+    app.addButton('Set custom path', openSettings, row=0, column=2)
     app.stopFrame()
 
     app.stopSubWindow()
 
-    app.startSubWindow("Settings", modal=True)
-    app.addLabel('labelPaths', 'Add custom paths for the required programs')
-    app.stopSubWindow()
+
+    # app.startSubWindow("Settings", modal=True)
+
+    # app.setBg('#0e1214', override=False, tint=False)
+    # app.setPadding([50,50])
+    # app.addLabel('labelPaths', 'Add custom paths for the required programs')
+    # app.setPadding([0,0])
+    
+    # app.startFrame('custom7zframe', row=0, column=0)
+    # app.addLabel('lbcustom7z', '7zip')
+    # app.setPadding([5,5])
+    # app.addFileEntry("custom7z", row=1, column=0)
+    # app.setAddFileEntryCursor("custom7z", "hand2")
+    # app.addButton("custom7zX", btnPress, row=1, column=1)
+    # app.setButtonBg("custom7zX", "#e5806c")
+    # app.setButtonRelief("custom7zX", "flat")
+    # app.setButtonCursor("custom7zX", "hand2")
+    # app.stopFrame()
+
+    # app.startFrame('customVSframe', row=1, column=0)
+    # app.addLabel('lbcustomVS', 'Visual Stuido Code')
+    # app.setPadding([5,5])
+    # app.addFileEntry("customVS", row=1, column=0)
+    # app.setAddFileEntryCursor("customVS", "hand2")
+    # app.addButton("customVSX", btnPress, row=1, column=1)
+    # app.setButtonBg("customVSX", "#e5806c")
+    # app.setButtonRelief("customVSX", "flat")
+    # app.setButtonCursor("customVSX", "hand2")
+    # app.stopFrame()
+
+    # app.startFrame('customSUBframe', row=2, column=0)
+    # app.addLabel('lbcustomSUB', 'Sublime Text 3')
+    # app.setPadding([5,5])
+    # app.addFileEntry("customSUB", row=1, column=0)
+    # app.setAddFileEntryCursor("customSUB", "hand2")
+    # app.addButton("customSUBX", btnPress, row=1, column=1)
+    # app.setButtonBg("customSUBX", "#e5806c")
+    # app.setButtonRelief("customSUBX", "flat")
+    # app.setButtonCursor("customSUBX", "hand2")
+    # app.stopFrame()
+
+    # app.setPadding([25,25])
+    # app.addLabel('span', ' ')
+    # app.stopSubWindow()
 
     # start the GUI
     app.go()

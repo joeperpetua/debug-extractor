@@ -324,7 +324,6 @@ if app:
     app.addLabel("file label", "Select debug file", row=1, column=0, colspan=2)
     app.setPadding([5,5])
     app.addFileEntry("file", row=1, column=3, colspan=1)
-    app.setAddFileEntryCursor("file", "hand2")
     app.addButton("X", btnPress, row=1, column=4)
     app.setButtonBg("X", "#e5806c")
     app.setButtonRelief("X", "flat")

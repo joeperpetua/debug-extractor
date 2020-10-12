@@ -32,7 +32,7 @@ app.setIcon('img/debug.gif')
 app.setFg('white', override=False)
 app.setBg('#263238', override=False, tint=False)
 app.setFont(size=12, family="Verdana", underline=False, slant="roman")
-app.setLogFile('error.log')
+app.setLogFile('daemon.log')
 
 def launchSubWindow(win):
     app.showSubWindow(win)
@@ -41,38 +41,60 @@ def openSettings():
     app.hideAllSubWindows()
     os.system("notepad config.yml")
     #app.showSubWindow('Settings')
+    app.info("settings file opened")
 
-def isx64():
-    if 'PROCESSOR_ARCHITEW6432' in os.environ:
-        return True
-    return os.environ['PROCESSOR_ARCHITECTURE'].endswith('64')
+# def isx64():
+#     if 'PROCESSOR_ARCHITEW6432' in os.environ:
+#         return True
+#     return os.environ['PROCESSOR_ARCHITECTURE'].endswith('64')
 
 def clearFileInput():
-    print('clear file')
     app.clearEntry("file")
     app.setMeter("progress", 0)
+    app.info("File input cleared")
 
 
 def openWithVS(path, name):
     print('vs :' + path + " with name : " + name)   
     #cmdVScode = "code " + destination + name
     cmdVScode = '"' + codeExecutable + '" ' + destination
+    app.info("Opening VScode...")
+    print("Opening VScode...")
 
-    result = subprocess.run(cmdVScode, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-    if result.stderr:
-        print(cmdVScode, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
-        app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode \n" + result.stderr.decode('utf-8'))
-        app.error("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode /// " + result.stderr.decode('utf-8'))
-        # Delete extracted folder in case of error while opening
+    
+    if os.system(cmdVScode) != 0:
+        app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode")
+        app.error("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode")
+         # Delete extracted folder in case of error while opening
         if os.path.exists(destination):
             rmtree(destination)
+        print("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode")
         return 0
+    
+    app.info("VScode opened !")
+    print("VScode opened !")
+    
+    #result = subprocess.run(cmdVScode, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+    #app.info("VScode result : " + str(result))
+
+    # if result.stderr:
+    #     print(cmdVScode, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
+    #     app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode \n" + result.stderr.decode('utf-8'))
+    #     app.error("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode /// " + result.stderr.decode('utf-8'))
+    #     # Delete extracted folder in case of error while opening
+    #     if os.path.exists(destination):
+    #         rmtree(destination)
+    #     return 0
+
+    app.info("VScode opened !")
 
 
 def openWithSub(path, name):
     print('sub :' + path + " with name : " + name)
     
     cmdSubl = '"' + sublimeExecutable + '" -a ' + destination
+    app.info("Opening Sublime...")
     result = subprocess.run(cmdSubl, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     if result.stderr:
         print(cmdSubl, 'err -> ' + result.stderr.decode('utf-8'))
@@ -83,11 +105,14 @@ def openWithSub(path, name):
             rmtree(destination)
         return 0
 
+    app.info("Sublime opened !")
+
 
 def unZip(path, name):
     print('unzip :' + path + "\nwith name : " + name)
     cmd7z = '"' + sevenZipExecutable + '" x "' + path + '" -bsp1 -o' + destination
 
+    app.info("unzipping...")
     # Lazy way of doing the progress bar
     for x in range(0, 11):
         app.setMeter("progress", x*random.randint(1, 10))
@@ -100,6 +125,8 @@ def unZip(path, name):
         app.setMeter("progress", 0)
         return 0
     app.setMeter("progress", 100)
+
+    app.info("finished unzipping well !")
 
 
 
@@ -148,6 +175,7 @@ def check(btn):
     global codeExecutable
     global sublimeExecutable
 
+    app.info("--------- start check, globals initialized correctly --------")
     # print('--------------------------------------------------------------------------------------------------------- ', path)
     # Check path possible scenarios
     if path == '':
@@ -156,11 +184,11 @@ def check(btn):
         app.info("No file selected /// Please select a file to analyze")
         return 0
     elif os.path.exists(path):
-        print('path exists')
+        app.info("provided path exists...")
         for element in supportedFiles:
             if path.endswith(element):
                 supported = True
-                print('file type supported: ' + element)
+                app.info('file type supported: ' + element)
 
             # print('file is supported: ' + str(supported))
         if not supported:
@@ -170,6 +198,7 @@ def check(btn):
 
     # C:\tickets\name\
     destination += name + bar
+    
 
     # Check directory name possible scenarios
     if name == '':
@@ -177,6 +206,9 @@ def check(btn):
         name = 'default_' + str(random.randint(0, 999999))
         # Fix crash when no name provided
         destination = "C:" + bar + "tickets" + bar + name + bar
+        
+        app.info("destination: " + destination)
+        
     elif os.path.exists(destination):
         print('Ticket already exists')
         ticketExist = app.questionBox("Existing ticket", "Ticket already exists, do you want to create a subfolder under the existing one to have the two versions?\nIf not, it will be overwritten.", parent=None)
@@ -193,10 +225,13 @@ def check(btn):
             # C:\tickets\name\namev2\
             destination += name + bar
             os.mkdir(destination)
+            app.info("created destination dir: " + destination)
             
         else:
             print("Overwrite")
+            app.info("overwrite selected, deleting destination: " + destination)
             rmtree(destination)
+            app.info("GOOD destination deleted !")
         
 
     # Check if programs are installed
@@ -206,17 +241,19 @@ def check(btn):
     if conf['custom_path']['sevenZip'] != 'path' and os.path.exists(conf['custom_path']['sevenZip']):
         print('custom 7z found')
         sevenZipExecutable = conf['custom_path']['sevenZip']
+        app.info('custom 7z found')
     elif os.path.exists(config.path['x64']['sevenZip']):
         print('x64 7z found')
         sevenZipExecutable = config.path['x64']['sevenZip']
-        pass
+        app.info('x64 7z found')
     elif os.path.exists(config.path['x86']['sevenZip']):
         print('x86 7z found')
         sevenZipExecutable = config.path['x86']['sevenZip']
-        pass
+        app.info('x86 7z found')
     else:
         print('7z64 not found')
         launchSubWindow('7zip not found')
+        app.error('7z not found')
         return 0
 
     canRun = 0
@@ -226,20 +263,20 @@ def check(btn):
         print('custom VScode found')
         codeExecutable = conf['custom_path']['VScode']
         canRun += 1
-        pass
+        app.info('custom VScode found')
     elif os.path.exists(config.path['x64']['VScode']):
         print('x64 VScode found')
         codeExecutable = config.path['x64']['VScode']
         canRun += 1
-        pass
+        app.info('x64 VScode found')
     elif os.path.exists(config.path['x86']['VScode']):
         print('x86 VScode found')
         codeExecutable = config.path['x86']['VScode']
         canRun += 1
-        pass
+        app.info('x86 VScode found')
     else:
         print('VScode not found')
-        pass
+        app.warn('VScode not found')
 
 
     #Sublime64 \\ C:\Program Files\Sublime Text 3\subl.exe
@@ -248,30 +285,33 @@ def check(btn):
         print('Custom Sublime Text 3 found')
         sublimeExecutable = conf['custom_path']['SUB']
         canRun += 1
+        app.info('Custom Sublime Text 3 found')
     elif os.path.exists(config.path['x64']['SUB']):
         print('x64 Sublime Text 3 found')
         sublimeExecutable = config.path['x64']['SUB']
         canRun += 1
-        pass
+        app.info('x64 Sublime Text 3 found')
     elif os.path.exists(config.path['x86']['SUB']):
         print('x86 Sublime Text 3 found')
         sublimeExecutable = config.path['x86']['SUB']
         canRun += 1
-        pass
+        app.info('x86 Sublime Text 3 found')
     else:
-        print('Sublime Text 3 64 not found')
-        pass
+        print('Sublime Text 3 not found')
+        app.warn('Sublime Text 3 not found')
         
 
     # Verify flag
     if canRun < 1:
         launchSubWindow('Text editor not found')
+        app.err('Text editor not found')
         return 0
 
 
     if unZip(path, name) == 0:
+        app.error('unzip error')
         return 0
-
+        
     if btn == 'vscode':
         openWithVS(path, name)
 
@@ -280,20 +320,29 @@ def check(btn):
     
     if app.getRadioButton("debug") == "Move .dat file to extracted folder":
         print("moveDebug")
+        app.info('moving debug file to destination...')
         os.replace(path, destination  + name + ".dat")
+        app.info('debug file moved OK')
+
 
     if app.getRadioButton("debug") == "Delete .dat file after extracting it\n(the extracted directory will remain)":
         print("delDebug")
+        app.info('deleting debug file...')
         os.remove(path)
+        app.info('debug file deleted OK')
     
     if app.getCheckBox("openDebug"):
+        app.info('try open VPN debug analyzer...')
         os.system('START "" https://tpkrtevx.vpnsupport.synology.me:4444/debug/')
+        app.info('VPN debug analyzer OK')
 
 
 
     destination = "C:" + bar + "tickets" + bar
     path = ''
     supported = False
+
+    app.info("------------------ finished GOOD ------------------")
 
 # Render GUI
 if app:

@@ -10,6 +10,7 @@ from shutil import rmtree
 from datetime import datetime
 from shutil import copyfile
 from appJar import gui
+from pathlib import Path
 
 with open("config.yml", "r") as ymlfile:
     conf = yaml.load(ymlfile, Loader=yaml.FullLoader)
@@ -56,12 +57,26 @@ def clearFileInput():
 
 def openWithVS(path, name):
     print('vs :' + path + " with name : " + name)   
-    #cmdVScode = "code " + destination + name
-    cmdVScode = '"' + codeExecutable + '" ' + destination
+    cmdVScode = "code " + destination
+    print(cmdVScode)
+    # cmdVScode = '"' + codeExecutable + '" ' + destination
+
+    formated_vs_PATH = Path(codeExecutable + "/bin")
+    env_path = os.environ.get('PATH', 'No PATH env variable')
+
     app.info("Opening VScode...")
     print("Opening VScode...")
 
+    # check for env PATH for vs code and creates it if not found
+    if str(formated_vs_PATH) in env_path:
+        print("env path for code found")
+        app.info("env path for code found")
+    else:
+        os.environ['PATH'] = str(env_path) + ";" + str(formated_vs_PATH)
+        print("env path for code not found, added correctly")
+        app.info("env path for code not found, added correctly")
     
+    # uses the env PATH to open vscode, if error print and delete extracted directory
     if os.system(cmdVScode) != 0:
         app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode")
         app.error("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode")
@@ -333,7 +348,7 @@ def check(btn):
     
     if app.getCheckBox("openDebug"):
         app.info('try open VPN debug analyzer...')
-        os.system('START "" https://tpkrtevx.vpnsupport.synology.me:4444/debug/')
+        os.system('START "" https://login.vpnsupport.synology.me:4444/webportal.cgi?go=http://192.168.40.40:80/debug/')
         app.info('VPN debug analyzer OK')
 
 

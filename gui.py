@@ -64,17 +64,25 @@ def openWithVS(path, name):
     formated_vs_PATH = Path(codeExecutable + "/bin")
     env_path = os.environ.get('PATH', 'No PATH env variable')
 
+    print("vs pathhhhasdhha" + str(formated_vs_PATH))
+    print("epath ---------- " + env_path)
     app.info("Opening VScode...")
     print("Opening VScode...")
 
-    # check for env PATH for vs code and creates it if not found
+    # check for env PATH for vs code and errors if not found
     if str(formated_vs_PATH) in env_path:
         print("env path for code found")
         app.info("env path for code found")
     else:
-        os.environ['PATH'] = str(env_path) + ";" + str(formated_vs_PATH)
-        print("env path for code not found, added correctly")
-        app.info("env path for code not found, added correctly")
+        launchSubWindow("ENV variable for VS Code not found")
+        print("env path for code not found")
+        app.error("env path for code not found")
+        # Delete extracted folder in case of error while opening
+        if os.path.exists(destination):
+            rmtree(destination)
+        return 0
+
+
     
     # uses the env PATH to open vscode, if error print and delete extracted directory
     if os.system(cmdVScode) != 0:
@@ -173,12 +181,18 @@ def btnPress(btn):
 
     if btn == 'Download Visual Studio Code':
         os.system('START "" https://code.visualstudio.com/download')
+    
+    if btn == ' Download Visual Studio Code ':
+        os.system('START "" https://code.visualstudio.com/download')
 
     if btn == 'Download Sublime Text 3':
         os.system('START "" https://www.sublimetext.com/3')
 
     if btn == 'Download 7zip':
         os.system('START "" https://www.7-zip.org/download.html')
+
+    if btn == 'How to add custom entry':
+        os.system('START "" https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/')
 
 
 def check(btn):
@@ -273,7 +287,7 @@ def check(btn):
 
     canRun = 0
 
-    #VScode64 \\ C:Users\USER\AppData\Local\Programs\Microsoft VS Code\code.exe
+    #VScode64 \\ C:Users\USER\AppData\Local\Programs\Microsoft VS Code
     if conf['custom_path']['VScode'] != 'path' and os.path.exists(conf['custom_path']['VScode']):
         print('custom VScode found')
         codeExecutable = conf['custom_path']['VScode']
@@ -462,9 +476,21 @@ if app:
     app.setPadding([60,10])
     app.addButton('Download 7zip', btnPress, row=0, column=0)
     app.addButton(' Set custom path ', openSettings, row=0, column=1)
+
+    app.setButtonBg("Download 7zip", "#4a4e50")
+    app.setButtonFg("Download 7zip", "#ffffff")
+    app.setButtonRelief("Download 7zip", "flat")
+    app.setButtonCursor("Download 7zip", "hand2")
+
+    app.setButtonBg(" Set custom path ", "#4a4e50")
+    app.setButtonFg(" Set custom path ", "#ffffff")
+    app.setButtonRelief(" Set custom path ", "flat")
+    app.setButtonCursor(" Set custom path ", "hand2")
+
     app.stopFrame()
 
     app.stopSubWindow()
+
 
     app.startSubWindow('Text editor not found', modal=True)
     app.setBg('#263238', override=False, tint=False)
@@ -479,6 +505,49 @@ if app:
     app.addButton('Download Visual Studio Code', btnPress, row=0, column=0)
     app.addButton('Download Sublime Text 3', btnPress, row=0, column=1)
     app.addButton('Set custom path', openSettings, row=0, column=2)
+
+    app.setButtonBg("Download Visual Studio Code", "#4a4e50")
+    app.setButtonFg("Download Visual Studio Code", "#ffffff")
+    app.setButtonRelief("Download Visual Studio Code", "flat")
+    app.setButtonCursor("Download Visual Studio Code", "hand2")
+
+    app.setButtonBg("Download Sublime Text 3", "#4a4e50")
+    app.setButtonFg("Download Sublime Text 3", "#ffffff")
+    app.setButtonRelief("Download Sublime Text 3", "flat")
+    app.setButtonCursor("Download Sublime Text 3", "hand2")
+
+    app.setButtonBg("Set custom path", "#4a4e50")
+    app.setButtonFg("Set custom path", "#ffffff")
+    app.setButtonRelief("Set custom path", "flat")
+    app.setButtonCursor("Set custom path", "hand2")
+    app.stopFrame()
+
+    app.stopSubWindow()
+
+
+
+    app.startSubWindow('ENV variable for VS Code not found', modal=True)
+    app.setBg('#263238', override=False, tint=False)
+    app.setPadding([60,60])
+
+    app.startFrame('modal env path message', row=0, column=0)
+    app.addLabel("env path not found message", "VS Code entry not found in environment variable PATH. \nThe tool requires it to launch VS code, please install VS Code correctly\nYou can also add it manually from the Control Panel.\n\nYou can click below to download VS Code and install it from scratch or see a guide on \nhow to add a custom entry into the environment variable PATH.\nThe entry has to be on the USER PATH variable and \nhas to point to the /bin directory of VS Code.", row=0, column=0)
+    app.stopFrame()
+
+    app.startFrame('modal env path', row=1, column=0)
+    app.setPadding([60,10])
+    app.addButton(' Download Visual Studio Code ', btnPress, row=0, column=0)
+    app.addButton('How to add custom entry', btnPress, row=0, column=1)
+    
+    app.setButtonBg(" Download Visual Studio Code ", "#4a4e50")
+    app.setButtonFg(" Download Visual Studio Code ", "#ffffff")
+    app.setButtonRelief(" Download Visual Studio Code ", "flat")
+    app.setButtonCursor(" Download Visual Studio Code ", "hand2")
+
+    app.setButtonBg("How to add custom entry", "#4a4e50")
+    app.setButtonFg("How to add custom entry", "#ffffff")
+    app.setButtonRelief("How to add custom entry", "flat")
+    app.setButtonCursor("How to add custom entry", "hand2")
     app.stopFrame()
 
     app.stopSubWindow()

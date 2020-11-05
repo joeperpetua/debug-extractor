@@ -1,9 +1,16 @@
 ##################################################################################################
 ## MODIFY CUSTOM PATHS ###########################################################################
+##                                                                                              ##
 ## Overwrite the "path" keyword with the custom path of the program                             ##
 ## for example -> sevenZip: D:/MyTools/7-Zip/7z.exe                                             ##
 ##                                                                                              ##
-## beware of not putting any space after the declaration and use FORWARD SLASH --> /////////    ##
+##                                                                                              ##
+## ONLY FOR CUSTOM PATH VSCODE ---> Specify the path without the .exe file, just the containing ##
+## folder                                                                                       ##
+## for example -> D:/Users/admin/AppData/Local/Programs/Microsoft VS Code                       ##
+##                                                                                              ##
+##                                                                                              ##
+## BEWARE of not putting any space after the declaration and use FORWARD SLASH --> /            ##
 ## -------------------------------------------------------------------------------------------- ##
 ## Don't forget to save the file before closing this window and to RESTART the tool             ##
 ## -------------------------------------------------------------------------------------------- ##

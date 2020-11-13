@@ -64,8 +64,8 @@ def openWithVS(path, name):
     formated_vs_PATH = Path(codeExecutable + "/bin")
     env_path = os.environ.get('PATH', 'No PATH env variable')
 
-    print("vs pathhhhasdhha" + str(formated_vs_PATH))
-    print("epath ---------- " + env_path)
+    # print("vs pathhhhasdhha" + str(formated_vs_PATH))
+    # print("epath ---------- " + env_path)
     app.info("Opening VScode...")
     print("Opening VScode...")
 
@@ -161,7 +161,18 @@ def btnPress(btn):
         clearFileInput()
     else:
         name = app.getEntry("fileName")
+        # if there is a space in the name it will be reformatted to the text without spaces
+        # and with mayus for each word
+        flag = name.split(" ")
+        if len(flag) > 1:
+            reformat = ''
+            for e in flag:
+                reformat += str(e).capitalize()
+            name = reformat
+            #print(name) 
+                  
         path = app.getEntry("file")
+        return 0
 
     if btn == 'vscode':
         check(btn)
@@ -232,9 +243,24 @@ def check(btn):
     # Check directory name possible scenarios
     if name == '':
         print('name not set, ticket will be saved with default name')
-        name = 'default_' + str(random.randint(0, 999999))
-        # Fix crash when no name provided
+        print(path)
+
+        # gives the original file name
+        name = path.split("/").pop().split(".")[0]
         destination = "C:" + bar + "tickets" + bar + name + bar
+
+        if os.path.exists(destination):
+            name += "_" + str(random.randint(0, 999999))
+            destination = "C:" + bar + "tickets" + bar + name + bar
+
+
+        print(name)
+        print(destination)
+
+        
+        # name = 'default_' + str(random.randint(0, 999999))
+        # Fix crash when no name provided
+        
         
         app.info("destination: " + destination)
         

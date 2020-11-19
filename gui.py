@@ -40,7 +40,7 @@ def launchSubWindow(win):
 
 def openSettings():
     app.hideAllSubWindows()
-    os.system("notepad config.yml")
+    subprocess.run("notepad config.yml", shell=True)
     #app.showSubWindow('Settings')
     app.info("settings file opened")
 
@@ -85,30 +85,30 @@ def openWithVS(path, name):
 
     
     # uses the env PATH to open vscode, if error print and delete extracted directory
-    if os.system(cmdVScode) != 0:
-        app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode")
-        app.error("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode")
-         # Delete extracted folder in case of error while opening
-        if os.path.exists(destination):
-            rmtree(destination)
-        print("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode")
-        return 0
+    # if os.system(cmdVScode) != 0:
+    #     app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode")
+    #     app.error("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode")
+    #      # Delete extracted folder in case of error while opening
+    #     if os.path.exists(destination):
+    #         rmtree(destination)
+    #     print("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode")
+    #     return 0
     
     app.info("VScode opened !")
     print("VScode opened !")
     
-    #result = subprocess.run(cmdVScode, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    result = subprocess.run(cmdVScode, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
-    #app.info("VScode result : " + str(result))
+    app.info("VScode result : " + str(result))
 
-    # if result.stderr:
-    #     print(cmdVScode, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
-    #     app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode \n" + result.stderr.decode('utf-8'))
-    #     app.error("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode /// " + result.stderr.decode('utf-8'))
-    #     # Delete extracted folder in case of error while opening
-    #     if os.path.exists(destination):
-    #         rmtree(destination)
-    #     return 0
+    if result.stderr:
+        print(cmdVScode, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
+        app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode \n" + result.stderr.decode('utf-8'))
+        app.error("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode /// " + result.stderr.decode('utf-8'))
+        # Delete extracted folder in case of error while opening
+        if os.path.exists(destination):
+            rmtree(destination)
+        return 0
 
     app.info("VScode opened !")
 
@@ -172,7 +172,7 @@ def btnPress(btn):
             #print(name) 
                   
         path = app.getEntry("file")
-        return 0
+        
 
     if btn == 'vscode':
         check(btn)
@@ -181,29 +181,29 @@ def btnPress(btn):
         check(btn)
     
     if btn == 'Help':
-        os.system('START "" https://github.com/joeperpetua/debug-extractor#debug-extractor-docs')
+        subprocess.run('START "" https://github.com/joeperpetua/debug-extractor#debug-extractor-docs', shell=True)
 
     if btn == 'Report Bug':
-        os.system('START "" https://github.com/joeperpetua/debug-extractor#bug-report')
+        subprocess.run('START "" https://github.com/joeperpetua/debug-extractor#bug-report', shell=True)
     
     if btn == 'Close':
         app.hideAllSubWindows()
     
 
     if btn == 'Download Visual Studio Code':
-        os.system('START "" https://code.visualstudio.com/download')
+        subprocess.run('START "" https://code.visualstudio.com/download', shell=True)
     
     if btn == ' Download Visual Studio Code ':
-        os.system('START "" https://code.visualstudio.com/download')
+        subprocess.run('START "" https://code.visualstudio.com/download', shell=True)
 
     if btn == 'Download Sublime Text 3':
-        os.system('START "" https://www.sublimetext.com/3')
+        subprocess.run('START "" https://www.sublimetext.com/3', shell=True)
 
     if btn == 'Download 7zip':
-        os.system('START "" https://www.7-zip.org/download.html')
+        subprocess.run('START "" https://www.7-zip.org/download.html', shell=True)
 
     if btn == 'How to add custom entry':
-        os.system('START "" https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/')
+        subprocess.run('START "" https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/', shell=True)
 
 
 def check(btn):
@@ -388,7 +388,7 @@ def check(btn):
     
     if app.getCheckBox("openDebug"):
         app.info('try open VPN debug analyzer...')
-        os.system('START "" https://login.vpnsupport.synology.me:4444/webportal.cgi?go=http://192.168.40.40:80/debug/')
+        subprocess.run('START "" https://login.vpnsupport.synology.me:4444/webportal.cgi?go=http://192.168.40.40:80/debug/', shell=True)
         app.info('VPN debug analyzer OK')
 
 

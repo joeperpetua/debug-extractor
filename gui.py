@@ -125,7 +125,7 @@ def unZip(path, name):
 
     app.info("unzipping...")
     # Lazy way of doing the progress bar
-    for x in range(0, 11):
+    for x in range(1, 9):
         app.setMeter("progress", x*random.randint(1, 10))
 
     result = subprocess.run(cmd7z, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)

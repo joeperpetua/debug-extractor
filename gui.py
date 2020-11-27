@@ -121,7 +121,7 @@ def openWithSub(path, name):
 
 def unZip(path, name):
     print('unzip :' + path + "\nwith name : " + name)
-    cmd7z = '"' + sevenZipExecutable + '" x "' + path + '" -bsp1 -o' + destination
+    cmd7z = '"' + sevenZipExecutable + '" x "' + path + '" -bsp1 -y -o' + destination
 
     app.info("unzipping...")
     # Lazy way of doing the progress bar

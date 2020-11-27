@@ -81,22 +81,8 @@ def openWithVS(path, name):
         if os.path.exists(destination):
             rmtree(destination)
         return 0
-
-
     
     # uses the env PATH to open vscode, if error print and delete extracted directory
-    # if os.system(cmdVScode) != 0:
-    #     app.errorBox("Cannot run VScode", str(datetime.now()) + " debug analizer: Error occurred while launching VScode")
-    #     app.error("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode")
-    #      # Delete extracted folder in case of error while opening
-    #     if os.path.exists(destination):
-    #         rmtree(destination)
-    #     print("Cannot run VScode /// " + str(datetime.now()) + " /// debug analizer: Error occurred while launching VScode")
-    #     return 0
-    
-    app.info("VScode opened !")
-    print("VScode opened !")
-    
     result = subprocess.run(cmdVScode, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
     app.info("VScode result : " + str(result))
@@ -111,6 +97,7 @@ def openWithVS(path, name):
         return 0
 
     app.info("VScode opened !")
+    print("VScode opened !")
 
 
 def openWithSub(path, name):
@@ -127,7 +114,8 @@ def openWithSub(path, name):
         if os.path.exists(destination):
             rmtree(destination)
         return 0
-
+    
+    app.info("Sublime result : " + str(result))
     app.info("Sublime opened !")
 
 
@@ -145,10 +133,12 @@ def unZip(path, name):
         print(cmd7z, 'succ -> ' + result.stdout.decode('utf-8'), 'err -> ' + result.stderr.decode('utf-8'))
         app.errorBox("Cannot extract file", str(datetime.now()) + " debug analizer: Error occurred while extracting file \n" + result.stderr.decode('utf-8') + "\nPlease check if the file is corrupted and try again.")
         app.error("Cannot extract file" + " /// debug analizer: Error occurred while extracting file /// " + result.stderr.decode('utf-8') + " /// Please check if the file is corrupted and try again.")
+        app.error(cmd7z + ' / succ -> ' + result.stdout.decode('utf-8') + ' / err -> ' + result.stderr.decode('utf-8'))
         app.setMeter("progress", 0)
         return 0
     app.setMeter("progress", 100)
 
+    app.info("7zip result: " + str(result))
     app.info("finished unzipping well !")
 
 
@@ -577,51 +567,6 @@ if app:
     app.stopFrame()
 
     app.stopSubWindow()
-
-
-    # app.startSubWindow("Settings", modal=True)
-
-    # app.setBg('#0e1214', override=False, tint=False)
-    # app.setPadding([50,50])
-    # app.addLabel('labelPaths', 'Add custom paths for the required programs')
-    # app.setPadding([0,0])
-    
-    # app.startFrame('custom7zframe', row=0, column=0)
-    # app.addLabel('lbcustom7z', '7zip')
-    # app.setPadding([5,5])
-    # app.addFileEntry("custom7z", row=1, column=0)
-    # app.setAddFileEntryCursor("custom7z", "hand2")
-    # app.addButton("custom7zX", btnPress, row=1, column=1)
-    # app.setButtonBg("custom7zX", "#e5806c")
-    # app.setButtonRelief("custom7zX", "flat")
-    # app.setButtonCursor("custom7zX", "hand2")
-    # app.stopFrame()
-
-    # app.startFrame('customVSframe', row=1, column=0)
-    # app.addLabel('lbcustomVS', 'Visual Stuido Code')
-    # app.setPadding([5,5])
-    # app.addFileEntry("customVS", row=1, column=0)
-    # app.setAddFileEntryCursor("customVS", "hand2")
-    # app.addButton("customVSX", btnPress, row=1, column=1)
-    # app.setButtonBg("customVSX", "#e5806c")
-    # app.setButtonRelief("customVSX", "flat")
-    # app.setButtonCursor("customVSX", "hand2")
-    # app.stopFrame()
-
-    # app.startFrame('customSUBframe', row=2, column=0)
-    # app.addLabel('lbcustomSUB', 'Sublime Text 3')
-    # app.setPadding([5,5])
-    # app.addFileEntry("customSUB", row=1, column=0)
-    # app.setAddFileEntryCursor("customSUB", "hand2")
-    # app.addButton("customSUBX", btnPress, row=1, column=1)
-    # app.setButtonBg("customSUBX", "#e5806c")
-    # app.setButtonRelief("customSUBX", "flat")
-    # app.setButtonCursor("customSUBX", "hand2")
-    # app.stopFrame()
-
-    # app.setPadding([25,25])
-    # app.addLabel('span', ' ')
-    # app.stopSubWindow()
 
     # start the GUI
     app.go()

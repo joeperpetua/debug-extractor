@@ -1,6 +1,6 @@
 # Debug Extractor Docs
 
-This is a tool developed to extract and open debug files from Synology servers. Read documentation for more information about setup with the text editors and how the tool works. 
+This is a tool developed to extract and open debug files from Synology NAS. Read documentation for more information about setup with the text editors and how the tool works. 
 
 ## Requirements
 - [7zip](https://www.7-zip.org/download.html)
@@ -16,6 +16,10 @@ This is a tool developed to extract and open debug files from Synology servers. 
 - Name of ticket cannot contain the following: 
   - Spaces ( )
   - Double quotes (")
+  - Forward - Backward slash (/ \\)
+  - Greater and less signs (< >)
+  - Opening - Closing question mark (¿ ?)
+
 
 ## The basics
 The functioning of this program is very simple: Extract and Open.
@@ -46,7 +50,7 @@ You will also have the option to launch a browser tab/window with the office ser
 <br><br>
 To open the debug, you can choose between Visual Studio Code and Sublime Text 3.
 <br>
-Both of these text editor provide some usefull shortcuts and functions that allow you to find and manage the logs and keywords you need to work with.
+Both of these text editor provide some useful shortcuts and functions that allow you to find and manage the logs and keywords you need to work with.
 <br>
 You can check the next section to take a look at what these text editors provide you.
 <br><br>

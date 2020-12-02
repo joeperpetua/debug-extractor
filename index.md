@@ -68,6 +68,21 @@ Remember to not delete the main directory were you have extracted the source .zi
 
 <br>
 
+You can pin the default folder to you Quick Access for a faster access to your debugs:
+<br>
+
+![Pin folder](https://i.imgur.com/DRZzH0e.png)
+
+![Pinned folder](https://i.imgur.com/dwSB0EK.png)
+
+<br>
+
+For a better organization you can sort the folders by date so you will have the more recent extracted folders on top:
+
+![Sort folders](https://i.imgur.com/cDojZYW.png)
+
+<br><br>
+
 In the case that you have either 7Zip, VS Code or Sublime Text 3 installed in non-default locations, you can set custom paths for them.
 <br><br>
 To do this you can go to the Settings tab on the top left of the program window:

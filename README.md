@@ -1,6 +1,6 @@
 # Debug Extractor Docs
 
-This is a tool developed to extract and open debug files from Synology servers. Read documentation for more information about setup with the text editors and how the tool works. 
+This is a tool developed to extract and open debug files from Synology NAS. Read documentation for more information about setup with the text editors and how the tool works. 
 
 ## Requirements
 - [7zip](https://www.7-zip.org/download.html)
@@ -13,9 +13,14 @@ This is a tool developed to extract and open debug files from Synology servers. 
 - Cannot properly open SRM debug files.
 - Cannot change default extraction path (C:\\tickets\\).
 - Debug files bigger than 400MB could freeze the program for a few seconds. 
-- Name of ticket cannot contain the following: 
+- If the original .dat file name contains a space, 7zip will fail to extract it, please be aware of the original file name until the issue is solved in the next version.
+- Name given to the ticket cannot contain the following: 
   - Spaces ( )
   - Double quotes (")
+  - Forward - Backward slash (/ \\)
+  - Greater and less signs (< >)
+  - Opening - Closing question mark (¿ ?)
+
 
 ## The basics
 The functioning of this program is very simple: Extract and Open.
@@ -46,7 +51,7 @@ You will also have the option to launch a browser tab/window with the office ser
 <br><br>
 To open the debug, you can choose between Visual Studio Code and Sublime Text 3.
 <br>
-Both of these text editor provide some usefull shortcuts and functions that allow you to find and manage the logs and keywords you need to work with.
+Both of these text editor provide some useful shortcuts and functions that allow you to find and manage the logs and keywords you need to work with.
 <br>
 You can check the next section to take a look at what these text editors provide you.
 <br><br>
@@ -64,6 +69,21 @@ Remember to not delete the main directory were you have extracted the source .zi
 
 <br>
 
+You can pin the default folder to you Quick Access for a faster access to your debugs:
+<br>
+
+![Pin folder](https://i.imgur.com/DRZzH0e.png)
+
+![Pinned folder](https://i.imgur.com/dwSB0EK.png)
+
+<br>
+
+For a better organization you can sort the folders by date so you will have the more recent extracted folders on top:
+
+![Sort folders](https://i.imgur.com/cDojZYW.png)
+
+<br><br>
+
 In the case that you have either 7Zip, VS Code or Sublime Text 3 installed in non-default locations, you can set custom paths for them.
 <br><br>
 To do this you can go to the Settings tab on the top left of the program window:
@@ -73,7 +93,7 @@ To do this you can go to the Settings tab on the top left of the program window:
 
 <br>
 
-After clicking this tab the settings.yml file will open and you will be able to edit set the custom path for the programs you desire:
+After clicking this tab the config.yml file will open and you will be able to edit set the custom path for the programs you desire:
 <br>
 
 ![Debug Extractor Settings File](https://i.imgur.com/nnYV3ca.png)
@@ -118,4 +138,3 @@ Sublime Text 3 extensions and configurations for better log reading:
 
 ## Bug Report
 You can check the daemon.log that is on the source directory of the tool, then contact me @chat (joelperpetua) and send me the daemon.log with a description of the issue.
-

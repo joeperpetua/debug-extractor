@@ -13,7 +13,8 @@ This is a tool developed to extract and open debug files from Synology NAS. Read
 - Cannot properly open SRM debug files.
 - Cannot change default extraction path (C:\\tickets\\).
 - Debug files bigger than 400MB could freeze the program for a few seconds. 
-- Name of ticket cannot contain the following: 
+- If the original .dat file name contains a space, 7zip will fail to extract it, please be aware of the original file name until the issue is solved in the next version.
+- Name given to the ticket cannot contain the following: 
   - Spaces ( )
   - Double quotes (")
   - Forward - Backward slash (/ \\)

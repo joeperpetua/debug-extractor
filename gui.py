@@ -121,6 +121,7 @@ def openWithSub(path, name):
 
 def unZip(path, name):
     print('unzip :' + path + "\nwith name : " + name)
+
     cmd7z = '"' + sevenZipExecutable + '" x "' + path + '" -bsp1 -y -o' + destination
 
     app.info("unzipping...")
@@ -225,6 +226,21 @@ def check(btn):
             app.errorBox("File not supported", "The tool supports only 'dat', 'zip', 'rar', 'tar', '7z', 'gzip' file extensions...\nCheck it")
             app.warn("File not supported /// The tool supports only 'dat', 'zip', 'rar', 'tar', '7z', 'gzip' file extensions...")
             return 0
+
+    # format file name to remove spaces and dots
+    tempPath = path.split('/')
+    tempPath = tempPath[len(tempPath)-1]
+    if ' ' in tempPath:
+        tempPath = tempPath.replace(' ', '')
+        
+    if '.' in tempPath:
+        occurences = tempPath.count('.')
+        tempPath = tempPath.replace('.', '', occurences - 1)
+
+    # now rename file with formatted name
+    os.rename(path,tempPath)
+
+    path = tempPath
 
     # C:\tickets\name\
     destination += name + bar

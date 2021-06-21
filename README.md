@@ -15,7 +15,6 @@ This is a tool developed to extract and open debug files from Synology NAS. Read
 - Debug files bigger than 400MB could freeze the program for a few seconds. 
 - If the original .dat file name contains a space, 7zip will fail to extract it, please be aware of the original file name until the issue is solved in the next version.
 - Name given to the ticket cannot contain the following: 
-  - Spaces ( )
   - Double quotes (")
   - Forward - Backward slash (/ \\)
   - Greater and less signs (< >)

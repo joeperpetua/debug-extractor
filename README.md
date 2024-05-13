@@ -137,4 +137,4 @@ Sublime Text 3 extensions and configurations for better log reading:
 
 
 ## Bug Report
-You can check the daemon.log that is on the source directory of the tool, then contact me @chat (joelperpetua) and send me the daemon.log with a description of the issue.
+You can check the daemon.log that is on the source directory of the tool, create an Issue on the repository attaching the logs and a description of the behavior.
